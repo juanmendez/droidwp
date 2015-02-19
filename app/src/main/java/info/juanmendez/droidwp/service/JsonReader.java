@@ -13,14 +13,12 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,43 +31,59 @@ import info.juanmendez.droidwp.model.Band;
 @EBean
 public class JsonReader {
 
+    private String jsonString = "";
+
     @RootContext
     MainActivity activity;
 
     @HttpsClient
     HttpClient httpsClient;
 
-    @AfterInject
-    void afterInject() {
-    }
-
     @Background
-    public void readJson(String url) {
-
+    public void readJson(URI uri ) {
         try {
-            List<Band> bands = this._readJson( url );
+            _saveJson( uri );
+            List<Band> bands = _parseJson();
             activity.loadContent( bands );
-        } catch (ClientProtocolException e) {
-            Log.e( MainActivity.tag, "1 " +  e.getClass() + " " + e.getMessage() );
         } catch (Exception e) {
-
-            Log.e( MainActivity.tag, "2 " +  e.getClass() + " " +e.getMessage() );
+            e.printStackTrace();
         }
     }
 
-    private List<Band> _readJson( String url ) throws Exception
+    @Background
+    public void readJson( String json )
     {
-        HttpGet httpget = new HttpGet(url);
+        jsonString = json;
+        List<Band> bands = _parseJson();
+        activity.loadContent( bands );
+    }
+
+    public String getJsonString() {
+        return jsonString;
+    }
+
+    private void _saveJson( URI uri ) throws Exception
+    {
+        HttpGet httpget = new HttpGet(uri.toString());
         HttpResponse response = httpsClient.execute(httpget);
-        ArrayList<Band> bands = new ArrayList<Band>();
 
         if( response.getStatusLine().getStatusCode() == 200 )
         {
             InputStream input = response.getEntity().getContent();
             StringWriter writer = new StringWriter();
             IOUtils.copy(input, writer);
-            String theString = writer.toString();
-            JSONArray jsonArray = new JSONArray(theString);
+            jsonString = writer.toString();
+        }
+    }
+
+    private ArrayList<Band> _parseJson()
+    {
+        ArrayList<Band> bands = new ArrayList<Band>();
+        JSONArray jsonArray = null;
+
+        try {
+            jsonArray = new JSONArray(jsonString);
+
             JSONObject b;
 
             int i, len = jsonArray.length();
@@ -78,6 +92,9 @@ public class JsonReader {
                 b = jsonArray.getJSONObject(i);
                 bands.add(new Band(b));
             }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         return bands;
