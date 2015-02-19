@@ -3,7 +3,6 @@ package info.juanmendez.droidwp;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.widget.ListView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -12,6 +11,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.StringRes;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,7 +19,6 @@ import java.util.List;
 
 import info.juanmendez.droidwp.helper.BandAdapter;
 import info.juanmendez.droidwp.model.Band;
-import info.juanmendez.droidwp.model.ParcelableBands;
 import info.juanmendez.droidwp.service.JsonReader;
 
 @EActivity(R.layout.activity_main)
@@ -34,40 +33,26 @@ public class MainActivity extends ActionBarActivity {
     @Bean
     BandAdapter adapter;
 
+    @StringRes(R.string.ajax_url)
+    String ajax;
+
     public static final String tag = "info.juanmendez.droidwp";
 
     @InstanceState
-    int bands_id = 1;
-
-    /**
-     * when the app starts, savedInstanceState is null, so the
-     * line below will create a new ParcelableBands
-     * otherwise, it will be pulled out from its parcelable format.
-     private void restoreSavedInstanceState_(Bundle savedInstanceState) {
-
-        if (savedInstanceState == null) {
-         return ;
-         }
-
-         parcelableBands = savedInstanceState.getParcelable("parcelableBands");
-     }
-     */
-    @InstanceState
-    public ParcelableBands parcelableBands = new ParcelableBands();
-
+    public String bandsJson;
 
     @AfterViews
     void afterViews() {
 
         try {
 
-            if( !parcelableBands.getJsonString().isEmpty() )
+            if( bandsJson != null )
             {
-                jsonReader.readJson( parcelableBands.getJsonString() );
+                jsonReader.readJson( bandsJson );
             }
             else
             {
-                URI uri = new URI( "http://juanmendez.info/wp-admin/admin-ajax.php?action=droid_json_content&type=band-musician" );
+                URI uri = new URI( ajax + "?action=droid_json_content&type=band-musician" );
                 jsonReader.readJson( uri );
             }
         } catch (URISyntaxException e) {
@@ -76,35 +61,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @UiThread
-    public void loadContent( List<Band> bands ) {
-
-        parcelableBands.setJsonString( jsonReader.getJsonString() );
+    public void loadContent( List<Band> bands )
+    {
+        bandsJson = jsonReader.getJsonString();
         adapter.setList( bands );
         list.setAdapter( adapter );
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //notify("onPause");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //notify("onResume");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        //notify("onStop");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //notify("onDestroy");
     }
 
     /**
