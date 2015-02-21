@@ -8,7 +8,7 @@ of Jackson Jr. Eventually this app will be created to its fullest. I personally 
 is by doing your own demos rather than just following along from other's workshops.
 
 This demo is also a window to Wordpress. I am going to be creating custom posts, and setting administration there for the backend.
-I am interested in the communit work done for <a href="http://wp-api.org/" target="_blank">WP API</a> which can benefit this demo.
+I am interested in what the community has done for <a href="http://wp-api.org/" target="_blank">WP API</a> which can benefit this demo in exchanging data.
 
 It's a very exciting thing to see how different platforms can coexist. Wish me luck.
 
