@@ -47,6 +47,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions{
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/services/com.fasterxml.jackson.core.JsonFactory'
+    }
 }
 
 dependencies {
@@ -58,4 +63,5 @@ dependencies {
     compile "org.androidannotations:androidannotations-api:$AAVersion"
     compile "commons-io:commons-io:+"
     compile 'com.squareup.picasso:picasso:2.4.0'
+    compile 'com.fasterxml.jackson.jr:jackson-jr-all:2.5.0'
 }

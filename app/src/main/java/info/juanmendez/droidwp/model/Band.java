@@ -11,26 +11,48 @@ import java.util.List;
  * Created by Juan on 2/14/2015.
  */
 public class Band {
+
     public String name;
+
+    public Band(){
+
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String image;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     List<Musician> musicians;
 
-    public Band(JSONObject json) {
+    public List<Musician> getMusicians() {
+        return musicians;
+    }
 
-        try {
-            name = json.getString("name");
-            image = json.getString("image");
+    public void setMusicians(List<Musician> musicians) {
+        this.musicians = musicians;
+    }
 
-            JSONArray ms = json.getJSONArray("musicians");
+    int id;
 
-            musicians = new ArrayList<Musician>();
-            int i, len = ms.length();
+    public int getId() {
+        return id;
+    }
 
-            for (i = 0; i < len; i++) {
-                musicians.add(new Musician(ms.getJSONObject(i)));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void setId(int id) {
+        this.id = id;
     }
 }

@@ -1,29 +1,24 @@
 package info.juanmendez.droidwp.service;
 
-import android.util.Log;
+import com.fasterxml.jackson.jr.ob.JSON;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.HttpsClient;
-import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
-import info.juanmendez.droidwp.MainActivity;
 import info.juanmendez.droidwp.model.Band;
+
 
 /**
  * Created by Juan on 2/14/2015.
@@ -32,34 +27,45 @@ import info.juanmendez.droidwp.model.Band;
 public class JsonReader {
 
     private String jsonString = "";
-
-    @RootContext
-    MainActivity activity;
+    private List<Band> bands;
 
     @HttpsClient
     HttpClient httpsClient;
 
+    JsonReaderHandler handler;
+
     @Background
-    public void readJson(URI uri ) {
+    public void readJson(URI uri, JsonReaderHandler h ) {
         try {
+            handler = h;
             _saveJson( uri );
-            List<Band> bands = _parseJson();
-            activity.loadContent( bands );
+
+            parse();
+            onContentReady();
         } catch (Exception e) {
+
             e.printStackTrace();
         }
     }
 
     @Background
-    public void readJson( String json )
+    public void readJson( String json, JsonReaderHandler h  )
     {
+        handler = h;
         jsonString = json;
-        List<Band> bands = _parseJson();
-        activity.loadContent( bands );
+
+        parse();
+        onContentReady();
     }
 
-    public String getJsonString() {
-        return jsonString;
+    private void parse()
+    {
+        try {
+           bands =  JSON.std.listOfFrom(Band.class, jsonString);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void _saveJson( URI uri ) throws Exception
@@ -76,28 +82,18 @@ public class JsonReader {
         }
     }
 
-    private ArrayList<Band> _parseJson()
+    @UiThread
+    private void onContentReady()
     {
-        ArrayList<Band> bands = new ArrayList<Band>();
-        JSONArray jsonArray = null;
-
-        try {
-            jsonArray = new JSONArray(jsonString);
-
-            JSONObject b;
-
-            int i, len = jsonArray.length();
-
-            for (i = 0; i < len; i++) {
-                b = jsonArray.getJSONObject(i);
-                bands.add(new Band(b));
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if( bands != null )
+        {
+            handler.onContentReady( bands, jsonString );
         }
 
-        return bands;
+    }
+
+    public interface JsonReaderHandler{
+        void onContentReady( List<Band> bands, String jsonString );
     }
 }
 
