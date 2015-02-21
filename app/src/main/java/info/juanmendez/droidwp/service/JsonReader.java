@@ -83,7 +83,7 @@ public class JsonReader {
     }
 
     @UiThread
-    private void onContentReady()
+    void onContentReady()
     {
         if( bands != null )
         {
