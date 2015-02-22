@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
-import info.juanmendez.droidwp.model.Band;
+import info.juanmendez.droidwp.model.ListItemInterface;
 
 /**
  * Created by Juan on 2/14/2015.
@@ -28,9 +28,9 @@ public class BandItemView extends LinearLayout {
         super(context);
     }
 
-    public void bind( Band band ){
-        band_text.setText( band.name );
+    public void bind( ListItemInterface item ){
+        band_text.setText(item.getName());
         img.setScaleType( ImageView.ScaleType.CENTER_CROP );
-        Picasso.with( getContext() ).load( band.image ).placeholder( R.drawable.placeholder ).tag( getContext() ).into( img );
+        Picasso.with( getContext() ).load( item.getImage() ).placeholder(R.drawable.placeholder).tag( getContext() ).into( img );
     }
 }

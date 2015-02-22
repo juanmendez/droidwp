@@ -14,7 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import info.juanmendez.droidwp.helper.BandAdapter;
+import info.juanmendez.droidwp.helper.BandMusicianAdapter;
 import info.juanmendez.droidwp.model.Band;
 import info.juanmendez.droidwp.service.JsonReader;
 
@@ -28,7 +28,7 @@ public class MainActivity extends ActionBarActivity implements JsonReader.JsonRe
     JsonReader jsonReader;
 
     @Bean
-    BandAdapter adapter;
+    BandMusicianAdapter adapter;
 
     @StringRes(R.string.ajax_url)
     String ajax;

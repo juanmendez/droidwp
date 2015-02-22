@@ -1,12 +1,9 @@
 package info.juanmendez.droidwp.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * Created by Juan on 2/14/2015.
  */
-public class Musician {
+public class Musician implements  ListItemInterface{
 
     //required by Jackson Jr.
     public Musician()

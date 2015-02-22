@@ -1,16 +1,11 @@
 package info.juanmendez.droidwp.model;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Juan on 2/14/2015.
  */
-public class Band {
+public class Band implements ListItemInterface {
 
     public String name;
 
